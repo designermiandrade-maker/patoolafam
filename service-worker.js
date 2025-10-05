@@ -1,62 +1,37 @@
-// PatoolaFam Service Worker - simple offline support
-const CACHE_VERSION = 'v1.0.0';
-const STATIC_CACHE = `patoola-static-${CACHE_VERSION}`;
-const STATIC_ASSETS = [
-  '/',                // adjust if your start page is different
-  '/manifest.json',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png'
-  // add more assets (CSS/JS/fonts) here after deploying once and seeing network requests
+// PatoolaFam Service Worker 🌼
+// Permite que o app funcione mesmo sem internet (cache offline simples)
+
+const CACHE_NAME = "patoolafam-cache-v1";
+const URLS_TO_CACHE = [
+  "/", // página inicial
+  "/index.html",
+  "/manifest.json",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png"
+  // Se quiser, pode adicionar mais arquivos (ex: /css/style.css, /js/main.js)
 ];
 
-self.addEventListener('install', (event) => {
+// 🪄 Instala o service worker e guarda os arquivos no cache
+self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(STATIC_ASSETS))
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log("Cache inicial criado 🎉");
+      return cache.addAll(URLS_TO_CACHE);
+    })
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
+// ♻️ Atualiza o cache quando houver nova versão
+self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.map(key => {
-        if (!key.includes(CACHE_VERSION)) {
-          return caches.delete(key);
-        }
-      }))
-    )
-  );
-  self.clients.claim();
-});
-
-// Strategy:
-// 1) HTML pages: network-first (fresh content when online; fallback to cache offline)
-// 2) Other requests (CSS/JS/images): cache-first (fast & offline)
-self.addEventListener('fetch', (event) => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  // Only handle same-origin requests
-  if (url.origin !== location.origin) return;
-
-  if (req.mode === 'navigate') {
-    // Network-first for navigations
-    event.respondWith(
-      fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(STATIC_CACHE).then(cache => cache.put(req, copy));
-        return res;
-      }).catch(() => caches.match(req).then(res => res || caches.match('/')))
-    );
-    return;
-  }
-
-  // Cache-first for others
-  event.respondWith(
-    caches.match(req).then(cached => cached || fetch(req).then(res => {
-      const copy = res.clone();
-      caches.open(STATIC_CACHE).then(cache => cache.put(req, copy));
-      return res;
-    }))
-  );
-});
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log("Removendo cache antigo:", key);
+            return caches.delete(key);
+          }
+        })
+      );
+    }
