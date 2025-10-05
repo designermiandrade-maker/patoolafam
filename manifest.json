@@ -1,43 +1,21 @@
 {
-  "name": "PAtoolaFam",
-  "short_name": "Patoola",
-  "id": "/",
-  "scope": "/",
+  "name": "PatoolaFam",
+  "short_name": "PatoolaFam",
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#ff8028",
   "description": "Família Patoola — um cantinho de amor e cuidados para pets!",
-  "categories": [
-    "lifestyle",
-    "productivity",
-    "utilities"
-  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "Vitrine Patoola",
-      "short_name": "Vitrine",
-      "url": "/loja"
-    },
-    {
-      "name": "Saúde do Pet",
-      "short_name": "Saúde",
-      "url": "/saude"
+      "type": "image/png"
     }
   ]
 }
